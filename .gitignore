@@ -1,0 +1,12 @@
+# Historical manually copied build output; deployment uses site/dist only.
+/_astro/
+/about/
+/archive/
+/favicon/
+/pagefind/
+/posts/
+/index.html
+/robots.txt
+/rss.xml
+/sitemap-*.xml
+/.nojekyll
