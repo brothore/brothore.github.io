@@ -7,7 +7,5 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Astro build failed' }
     node node_modules/pagefind/lib/runner/bin.cjs --site dist
     if ($LASTEXITCODE -ne 0) { throw 'Search index build failed' }
-    Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'site/dist') -Force |
-        Copy-Item -Destination $PSScriptRoot -Recurse -Force
-    New-Item -ItemType File -Path (Join-Path $PSScriptRoot '.nojekyll') -Force | Out-Null
 } finally { Pop-Location }
+Write-Host 'Local build complete. Commit source changes and push; GitHub Actions deploys site/dist.'

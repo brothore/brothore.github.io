@@ -11,10 +11,12 @@
 - `site/src/config.ts`：基本信息与配色。
 - `site/src/content/posts/`：Markdown 文章。
 - `site/src/content/spec/about.md`：关于页。
-- 根目录网页：构建结果，供 GitHub Pages 的 main / root 发布。
+- 根目录网页：历史构建产物，不再用于发布。
+- `.github/workflows/deploy.yml`：自动检查、构建并部署 `site/dist`。
+- Pages 来源：GitHub Actions。
 
 依赖安装：在 `site/` 运行 `pnpm install --frozen-lockfile`。
-更新文章后，在仓库根目录运行 `./publish.ps1`，再提交并推送。
+更新文章后运行 `./publish.ps1` 本地检查，提交源码并推送，GitHub Actions 自动发布。不要复制构建结果到根目录。
 
 ## 模板兼容修正
 
