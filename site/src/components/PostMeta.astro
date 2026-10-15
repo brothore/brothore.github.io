@@ -61,22 +61,14 @@ const className = Astro.props.class;
         </div>
     </div>
 
-    <!-- tags -->
-    <div class:list={["items-center", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
-        <div class="meta-icon"
-        >
-            <Icon name="material-symbols:tag-rounded" class="text-xl"></Icon>
-        </div>
-        <div class="flex flex-row flex-nowrap items-center">
-            {(tags && tags.length > 0) && tags.map((tag, i) => (
-                <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
-                <a href={getTagUrl(tag)} aria-label={`View all posts with the ${tag.trim()} tag`}
-                   class="link-lg transition text-50 text-sm font-medium
-                                hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
-                    {tag.trim()}
-                </a>
-            ))}
-            {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium">{i18n(I18nKey.noTags)}</div>}
-        </div>
+    <!-- Independent tags, rather than a path-like sequence. -->
+    <div aria-label="文章标签" class:list={["min-w-0 flex-wrap gap-2", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
+        {(tags && tags.length > 0) && tags.map((tag) => (
+            <a href={getTagUrl(tag)} aria-label={`查看标签：${tag.trim()}`}
+               class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium bg-[var(--btn-regular-bg)] text-[var(--primary)] hover:bg-[var(--btn-regular-bg-hover)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+                <span aria-hidden="true">#</span>{tag.trim()}
+            </a>
+        ))}
+        {!(tags && tags.length > 0) && <span class="text-50 text-sm">{i18n(I18nKey.noTags)}</span>}
     </div>
 </div>

@@ -1,0 +1,30 @@
+---
+import { Icon } from "astro-icon/components";
+import { url } from "../../utils/url-utils";
+---
+<a href={url("/")} aria-label="返回首页" title="返回首页" class="floating-home">
+    <Icon name="material-symbols:home-outline-rounded" class="text-xl" />
+    <span>返回首页</span>
+</a>
+<style>
+    .floating-home {
+        display: none;
+        position: fixed;
+        z-index: 40;
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: calc(1.25rem + env(safe-area-inset-bottom));
+        align-items: center;
+        gap: .4rem;
+        padding: .75rem 1rem;
+        border-radius: 1rem;
+        background: var(--btn-regular-bg);
+        color: var(--primary);
+        font-weight: 700;
+        box-shadow: 0 4px 18px rgb(0 0 0 / .12);
+        transition: background .2s;
+    }
+    :global(body:has(#post-container)) .floating-home { display: flex; }
+    .floating-home:hover { background: var(--btn-regular-bg-hover); }
+    .floating-home:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+    @media print { .floating-home { display: none !important; } }
+</style>
