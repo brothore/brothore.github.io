@@ -2,29 +2,43 @@
 import { Icon } from "astro-icon/components";
 import { url } from "../../utils/url-utils";
 ---
-<a href={url("/")} aria-label="返回首页" title="返回首页" class="floating-home">
-    <Icon name="material-symbols:home-outline-rounded" class="text-xl" />
-    <span>返回首页</span>
-</a>
+<nav class="reading-tools" aria-label="阅读工具栏">
+ <a href={url("/")} title="返回首页" aria-label="返回首页"><Icon name="material-symbols:home-outline-rounded" /></a>
+ <button type="button" data-share title="分享文章" aria-label="分享文章"><Icon name="material-symbols:share-outline" /></button>
+ <button type="button" data-top title="回到顶部" aria-label="回到顶部"><Icon name="material-symbols:keyboard-arrow-up-rounded" /></button>
+</nav>
+<div class="share-feedback" role="status" aria-live="polite"></div>
 <style>
-    .floating-home {
-        display: none;
-        position: fixed;
-        z-index: 40;
-        right: max(1rem, env(safe-area-inset-right));
-        bottom: calc(1.25rem + env(safe-area-inset-bottom));
-        align-items: center;
-        gap: .4rem;
-        padding: .75rem 1rem;
-        border-radius: 1rem;
-        background: var(--btn-regular-bg);
-        color: var(--primary);
-        font-weight: 700;
-        box-shadow: 0 4px 18px rgb(0 0 0 / .12);
-        transition: background .2s;
-    }
-    :global(body:has(#post-container)) .floating-home { display: flex; }
-    .floating-home:hover { background: var(--btn-regular-bg-hover); }
-    .floating-home:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
-    @media print { .floating-home { display: none !important; } }
+ .reading-tools { display:none; position:fixed; z-index:60; right:16px; bottom:calc(24px + env(safe-area-inset-bottom)); padding:4px; flex-direction:column; border-radius:16px; background:var(--card-bg); box-shadow:0 4px 22px #00000012; border:1px solid var(--line-divider); }
+ :global(body:has(#post-container)) .reading-tools {display:flex;}
+ .reading-tools a,.reading-tools button {display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;color:var(--primary);font-size:22px;background:transparent;border:0;cursor:pointer;}
+ .reading-tools a:hover,.reading-tools button:hover {background:var(--btn-regular-bg);}
+ .reading-tools :focus-visible {outline:2px solid var(--primary);outline-offset:-3px;}
+ .share-feedback {position:fixed;z-index:70;bottom:100px;left:50%;transform:translateX(-50%);background:var(--card-bg);color:var(--primary);padding:8px 16px;border-radius:12px;box-shadow:0 2px 16px #0002;display:none;}
+ .share-feedback.visible {display:block;}
+ @media(min-width:768px) {
+  .reading-tools {top:55vh;bottom:auto;transform:translateY(-50%);right:auto;left:min(calc(50% + var(--page-width) / 2 + 12px),calc(100% - 62px));}
+  :global(body:has(#post-container) #toc-inner-wrapper) {padding-left:64px;}
+ }
+ @media(min-width:768px) and (max-width:1350px) {
+  :global(body:has(#post-container) #swup-container) {padding-right:64px;}
+ }
+ @media(max-width:767px) { .reading-tools {flex-direction:row;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));} }
+ :global(body:has(#post-container) .back-to-top-wrapper) {display:none!important;}
+ @media print {.reading-tools,.share-feedback {display:none!important;}}
 </style>
+<script>
+ let timer: ReturnType<typeof setTimeout>;
+ document.addEventListener("click", async (event) => {
+  const target = event.target as Element;
+  if(target.closest("[data-top]")) window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
+  if(!target.closest("[data-share]")) return;
+  const feedback = document.querySelector(".share-feedback");
+  const notify = (message:string) => {if(!feedback)return;feedback.textContent=message;feedback.classList.add("visible");clearTimeout(timer);timer=setTimeout(()=>feedback.classList.remove("visible"),2500);};
+  const shareUrl = new URL(location.pathname, location.origin);
+  try {
+   if(navigator.share && navigator.canShare?.({url:shareUrl.href})) { await navigator.share({title:document.title,url:shareUrl.href}); }
+   else {await navigator.clipboard.writeText(shareUrl.href);notify("文章链接已复制");}
+  } catch(error) { if(error instanceof Error && error.name === "AbortError") return;notify("分享未完成，请复制地址栏链接"); }
+ });
+</script>
